@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Raku Fusion Sushi – Ecoparque, Machalí</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Bebas+Neue&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --black:   #0a0a0a;
+      --charcoal:#111111;
+      --dark:    #181818;
+      --gold:    #c9963f;
+      --gold-lt: #e8b96a;
+      --orange:  #e85d04;
+      --cream:   #f5efe6;
+      --grey:    #888888;
+      --white:   #ffffff;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--cream);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+```
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+/* ── Nav ───────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 3rem;
+  background: rgba(10,10,10,.88);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(201,150,63,.15);
+  transition: padding .3s;
+}
+nav.scrolled { padding: .6rem 3rem; }
+
+/* ── LOGO CIRCULAR ─────────────────────────────────────────── */
+.nav-logo-wrap {
+  display: flex; align-items: center; gap: .9rem;
+}
+.nav-logo-circle {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  overflow: hidden;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 18px rgba(201,150,63,.3);
+  flex-shrink: 0;
+  transition: box-shadow .3s;
+}
+nav.scrolled .nav-logo-circle { width: 44px; height: 44px; }
+.nav-logo-circle:hover { box-shadow: 0 0 28px rgba(201,150,63,.55); }
+.nav-logo-circle img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+/* Fallback si no hay imagen */
+.nav-logo-circle .logo-initials {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--gold); letter-spacing: .05em;
+  text-align: center; line-height: 1;
+}
+.nav-brand-text {
+  display: flex; flex-direction: column;
+}
+.nav-brand-main {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.15rem; letter-spacing: .14em;
+  color: var(--gold); line-height: 1;
+}
+.nav-brand-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .65rem; letter-spacing: .25em;
+  color: var(--grey); text-transform: uppercase;
+}
+
+/* Hamburger */
+.hamburger {
+  display: flex; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer;
+  padding: 8px; position: relative; z-index: 1100;
+}
+.hamburger span {
+  display: block; width: 28px; height: 2px;
+  background: var(--gold);
+  border-radius: 2px;
+  transition: transform .4s ease, opacity .3s;
+  transform-origin: center;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu overlay */
+.menu-overlay {
+  position: fixed; inset: 0; z-index: 900;
+  background: rgba(10,10,10,.97);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 2.5rem;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s ease;
+}
+.menu-overlay.open { opacity: 1; pointer-events: all; }
+.menu-overlay a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--cream);
+  text-decoration: none;
+  letter-spacing: .1em;
+  transition: color .25s, letter-spacing .25s;
+}
+.menu-overlay a:hover { color: var(--orange); letter-spacing: .2em; }
+.menu-divider {
+  width: 1px; height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+#hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+  background: var(--black);
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(232,93,4,.18) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(201,150,63,.1) 0%, transparent 60%);
+}
+.wave-decor {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(201,150,63,.12);
+  animation: pulse 6s ease-in-out infinite;
+}
+.wave-decor:nth-child(1) { width: 600px; height: 600px; right: -200px; bottom: -200px; animation-delay: 0s; }
+.wave-decor:nth-child(2) { width: 400px; height: 400px; right: -100px; bottom: -100px; border-color: rgba(201,150,63,.18); animation-delay: 1s; }
+.wave-decor:nth-child(3) { width: 200px; height: 200px; right: 0; bottom: 0; border-color: rgba(232,93,4,.25); animation-delay: 2s; }
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50%       { transform: scale(1.04); opacity: 1; }
+}
+.wave-decor-left { position: absolute; left: -180px; top: 60px; border-radius: 50%; border: 1px solid rgba(201,150,63,.1); }
+
+.hero-content {
+  position: relative; z-index: 5;
+  text-align: center; padding: 2rem 1.5rem;
+  animation: fadeUp .9s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-badge {
+  display: inline-block;
+  font-size: .7rem; letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(232,93,4,.4);
+  padding: .4rem 1.2rem; border-radius: 2px;
+  margin-bottom: 1.5rem;
+  animation: fadeUp .9s .1s ease both;
+}
+
+/* Hero logo circular grande */
+.hero-logo-circle {
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  overflow: hidden;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.8rem;
+  box-shadow: 0 0 50px rgba(201,150,63,.35), 0 0 100px rgba(201,150,63,.1);
+  animation: fadeUp .9s .2s ease both;
+  position: relative;
+}
+.hero-logo-circle img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.hero-logo-circle .logo-fallback {
+  text-align: center;
+  padding: .5rem;
+}
+.hero-logo-circle .logo-fallback span {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-weight: 700;
+  color: var(--gold); letter-spacing: .1em;
+  display: block; line-height: 1.3;
+}
+.hero-logo-circle .logo-fallback small {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: .6rem; letter-spacing: .3em;
+  color: var(--grey); text-transform: uppercase;
+  margin-top: .3rem; display: block;
+}
+
+.hero-tagline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.7rem);
+  font-style: italic;
+  color: var(--gold-lt);
+  letter-spacing: .03em;
+  margin-bottom: 2.5rem;
+  animation: fadeUp .9s .35s ease both;
+}
+.hero-ctas {
+  display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp .9s .5s ease both;
+}
+.btn-primary {
+  background: var(--orange); color: #fff;
+  padding: .85rem 2.2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .78rem; font-weight: 600;
+  letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none; border: none;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: background .25s, transform .2s; display: inline-block;
+}
+.btn-primary:hover { background: #ff6b1a; transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--gold);
+  padding: .85rem 2.2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .78rem; font-weight: 500;
+  letter-spacing: .2em; text-transform: uppercase;
+  text-decoration: none; border: 1px solid var(--gold);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  transition: all .25s; display: inline-block;
+}
+.btn-outline:hover { background: var(--gold); color: var(--black); transform: translateY(-2px); }
+
+/* ── SCROLL CENTRADO ───────────────────────────────────────── */
+.hero-scroll {
+  position: absolute; bottom: 2.2rem;
+  left: 0; right: 0;
+  margin: 0 auto;
+  width: fit-content;
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  color: var(--grey); font-size: .62rem; letter-spacing: .28em;
+  text-transform: uppercase;
+  animation: fadeUp 1s .8s ease both;
+  white-space: nowrap;
+}
+.scroll-line {
+  width: 1px; height: 50px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%, 100% { transform: scaleY(1); opacity: 1; }
+  50% { transform: scaleY(.5); opacity: .4; }
+}
+
+/* ── Section Shared ─────────────────────────────────────────── */
+section { padding: 6rem 1.5rem; }
+.section-label {
+  font-size: .65rem; letter-spacing: .4em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 1rem;
+}
+/* TÍTULO PRINCIPAL – Bebas Neue (mantener impacto) */
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  line-height: .95; color: var(--cream); letter-spacing: .04em;
+}
+/* NUEVO: Título de sección en estilo lujo / serif */
+.section-title-luxury {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  font-weight: 600;
+  line-height: 1.1; color: var(--cream); letter-spacing: .02em;
+}
+.section-title-luxury em {
+  font-style: italic; color: var(--gold);
+}
+.gold-accent { color: var(--gold); }
+.section-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  color: var(--grey); margin-top: .6rem;
+}
+.separator {
+  width: 60px; height: 1px;
+  background: linear-gradient(to right, var(--orange), transparent);
+  margin: 1.8rem 0;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+
+/* ── Ticker ───────────────────────────────────────────────── */
+.ticker-wrap {
+  background: var(--orange); overflow: hidden; padding: .6rem 0;
+  border-top: 1px solid rgba(255,255,255,.1); border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.ticker-inner { display: flex; gap: 3rem; animation: ticker 30s linear infinite; width: max-content; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-item {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: .15em;
+  color: #fff; white-space: nowrap; display: flex; align-items: center; gap: 1.5rem;
+}
+.ticker-dot { width: 5px; height: 5px; background: rgba(255,255,255,.6); border-radius: 50%; }
+
+/* ── About ──────────────────────────────────────────────────── */
+#about { background: var(--charcoal); position: relative; overflow: hidden; }
+#about::before {
+  content: 'RAKU'; position: absolute; right: -2rem; top: 50%;
+  transform: translateY(-50%); font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(8rem, 20vw, 18rem); color: rgba(201,150,63,.04);
+  line-height: 1; pointer-events: none; letter-spacing: -.02em;
+}
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+}
+@media (max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+.about-text p {
+  font-size: .92rem; line-height: 1.9; color: rgba(245,239,230,.75); margin-bottom: 1.2rem;
+}
+/* Tipografía de lujo en about */
+.about-heading-luxury {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 600; line-height: 1.1; color: var(--cream); margin-bottom: .5rem;
+}
+.about-heading-luxury em { font-style: italic; color: var(--gold); }
+.about-heading-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-style: italic;
+  color: var(--grey); margin-bottom: 1.2rem;
+}
+.about-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem;
+}
+.stat-box {
+  border: 1px solid rgba(201,150,63,.2); padding: 1.4rem; position: relative;
+}
+.stat-box::before {
+  content: ''; position: absolute; top: -1px; left: -1px;
+  width: 20px; height: 20px;
+  border-top: 2px solid var(--orange); border-left: 2px solid var(--orange);
+}
+.stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; color: var(--gold); line-height: 1; }
+.stat-label { font-size: .68rem; letter-spacing: .15em; color: var(--grey); margin-top: .3rem; }
+.about-visual { position: relative; }
+
+/* ── PLACEHOLDER DE IMAGEN ─────────────────────────────────── */
+/* Marco de imagen – reemplaza src con tu foto real */
+.about-img-frame {
+  width: 100%; aspect-ratio: 3/4;
+  background: var(--dark);
+  border: 1px solid rgba(201,150,63,.2);
+  overflow: hidden; position: relative;
+}
+.about-img-frame img {
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(.9) contrast(1.05);
+  transition: transform .6s ease;
+}
+.about-img-frame:hover img { transform: scale(1.04); }
+.about-img-frame::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,10,10,.6) 0%, transparent 50%);
+  pointer-events: none;
+}
+/* Etiqueta visible cuando no hay imagen real */
+.img-placeholder-label {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: .7rem; z-index: 2;
+  background: linear-gradient(135deg, #161616, #1f1f1f);
+}
+.img-placeholder-label svg { opacity: .25; }
+.img-placeholder-label span {
+  font-size: .62rem; letter-spacing: .3em;
+  color: var(--grey); text-transform: uppercase;
+}
+/* Ocultar placeholder si la img carga bien */
+.about-img-frame img[src]:not([src=""]) ~ .img-placeholder-label { display: none; }
+
+.frame-corner {
+  position: absolute; bottom: -10px; right: -10px;
+  width: 80px; height: 80px;
+  border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold);
+}
+
+/* ── Menu Preview ───────────────────────────────────────────── */
+#menu-preview { background: var(--black); position: relative; }
+.menu-preview-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 1.5rem; margin-bottom: 3.5rem;
+}
+/* Título luxury para menú */
+.menu-title-luxury {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  font-weight: 600; line-height: 1.1; color: var(--cream);
+}
+.menu-title-luxury em { font-style: italic; color: var(--gold); }
+.menu-tabs { display: flex; gap: .4rem; flex-wrap: wrap; }
+.tab-btn {
+  background: transparent; color: var(--grey);
+  border: 1px solid rgba(255,255,255,.1);
+  padding: .5rem 1.2rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .7rem; letter-spacing: .12em; text-transform: uppercase;
+  cursor: pointer; transition: all .25s;
+}
+.tab-btn.active, .tab-btn:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+.menu-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;
+}
+.menu-card {
+  background: var(--charcoal); border: 1px solid rgba(201,150,63,.12);
+  overflow: hidden; position: relative;
+  transition: transform .35s ease, border-color .35s;
+}
+.menu-card:hover { transform: translateY(-6px); border-color: rgba(201,150,63,.4); }
+.menu-card-img {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+}
+.menu-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s ease;
+}
+.menu-card:hover .menu-card-img img { transform: scale(1.08); }
+.img-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #1a1a1a, #222);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .5rem;
+}
+.img-placeholder span { font-size: .65rem; letter-spacing: .2em; color: var(--grey); text-transform: uppercase; }
+.img-placeholder svg { opacity: .3; }
+.card-badge {
+  position: absolute; top: 1rem; left: 1rem;
+  background: var(--orange); color: #fff;
+  font-size: .6rem; letter-spacing: .15em; padding: .25rem .7rem; text-transform: uppercase;
+}
+.menu-card-body { padding: 1.4rem 1.4rem 1.6rem; }
+.menu-card-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 600;
+  color: var(--cream); margin-bottom: .4rem;
+}
+.menu-card-desc { font-size: .72rem; color: var(--grey); line-height: 1.7; margin-bottom: 1rem; }
+.menu-card-footer { display: flex; align-items: center; justify-content: space-between; }
+.menu-card-price { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; color: var(--gold); letter-spacing: .05em; }
+.card-tag {
+  font-size: .6rem; letter-spacing: .15em; color: var(--orange); text-transform: uppercase;
+  border: 1px solid rgba(232,93,4,.4); padding: .2rem .6rem;
+}
+.menu-cta-wrap { text-align: center; margin-top: 3rem; }
+
+/* ── Promos ─────────────────────────────────────────────────── */
+#promos { background: var(--charcoal); position: relative; overflow: hidden; }
+.promos-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem;
+}
+.promo-card {
+  background: var(--dark); border: 1px solid rgba(201,150,63,.15);
+  padding: 2rem 1.8rem; position: relative; overflow: hidden; transition: border-color .3s;
+}
+.promo-card:hover { border-color: var(--orange); }
+.promo-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(to right, var(--orange), var(--gold), transparent);
+}
+.promo-card-qty {
+  font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; line-height: 1;
+  color: rgba(232,93,4,.15); position: absolute; top: 1rem; right: 1.2rem;
+}
+.promo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 600;
+  color: var(--cream); margin-bottom: .8rem; letter-spacing: .02em;
+}
+.promo-items { list-style: none; margin-bottom: 1.5rem; }
+.promo-items li {
+  font-size: .72rem; color: var(--grey); padding: .3rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.05); display: flex; align-items: center; gap: .5rem;
+}
+.promo-items li::before { content: '›'; color: var(--orange); font-size: 1rem; }
+.promo-price { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); }
+
+/* ── Experience ─────────────────────────────────────────────── */
+#experience { background: var(--black); text-align: center; }
+.experience-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 2rem; margin-top: 3.5rem;
+}
+.exp-item {
+  padding: 2rem 1.5rem; border: 1px solid rgba(201,150,63,.1);
+  transition: border-color .3s, transform .3s; position: relative;
+}
+.exp-item:hover { border-color: rgba(232,93,4,.5); transform: translateY(-4px); }
+.exp-icon { font-size: 2.2rem; margin-bottom: 1rem; }
+.exp-item h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem; font-weight: 600; letter-spacing: .03em;
+  color: var(--cream); margin-bottom: .5rem;
+}
+.exp-item p { font-size: .75rem; color: var(--grey); line-height: 1.7; }
+
+/* ── Contacto ───────────────────────────────────────────────── */
+#contacto { background: var(--charcoal); position: relative; overflow: hidden; }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem;
+}
+@media (max-width: 768px) { .contact-grid { grid-template-columns: 1fr; } }
+.contact-block h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem; font-weight: 600; letter-spacing: .02em;
+  color: var(--gold); margin-bottom: 1.5rem;
+}
+.horario-row {
+  display: flex; justify-content: space-between; padding: .85rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.06); font-size: .82rem;
+}
+.horario-day { color: var(--cream); font-weight: 500; }
+.horario-time { color: var(--grey); }
+.contact-info-item {
+  display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.contact-info-icon {
+  width: 36px; height: 36px; background: rgba(232,93,4,.15);
+  border: 1px solid rgba(232,93,4,.3); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-size: 1rem;
+}
+.contact-info-text p { font-size: .72rem; color: var(--grey); }
+.contact-info-text a {
+  font-size: .88rem; color: var(--cream); text-decoration: none; font-weight: 500; transition: color .2s;
+}
+.contact-info-text a:hover { color: var(--orange); }
+.ig-btn {
+  display: inline-flex; align-items: center; gap: .7rem;
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+  color: #fff; padding: .85rem 2rem;
+  font-size: .78rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+  text-decoration: none; margin-top: 1.5rem; transition: opacity .25s, transform .2s;
+}
+.ig-btn:hover { opacity: .85; transform: translateY(-2px); }
+
+/* ── Full Menu Page ─────────────────────────────────────────── */
+#full-menu { display: none; background: var(--black); min-height: 100vh; padding-top: 5rem; }
+#full-menu.visible { display: block; }
+.full-menu-section { margin-bottom: 4rem; }
+.fms-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; font-weight: 600; color: var(--orange);
+  border-bottom: 1px solid rgba(232,93,4,.3); padding-bottom: .8rem; margin-bottom: 1.5rem;
+}
+.fms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 3rem; }
+@media (max-width: 600px) { .fms-grid { grid-template-columns: 1fr; } }
+.fms-item {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,.05); gap: 1rem;
+}
+.fms-item-name { font-size: .85rem; color: var(--cream); font-weight: 500; }
+.fms-item-desc { font-size: .68rem; color: var(--grey); margin-top: .15rem; }
+.fms-item-price {
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--gold);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+footer {
+  background: var(--black);
+  border-top: 1px solid rgba(201,150,63,.15);
+  padding: 3rem 1.5rem 2rem; text-align: center;
+}
+.footer-logo-circle {
+  width: 68px; height: 68px; border-radius: 50%;
+  border: 2px solid rgba(201,150,63,.4);
+  overflow: hidden; background: var(--dark);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 20px rgba(201,150,63,.2);
+}
+.footer-logo-circle img { width: 100%; height: 100%; object-fit: cover; }
+.footer-logo-circle .logo-initials {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700; color: var(--gold); letter-spacing: .05em;
+}
+.footer-links {
+  display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+}
+.footer-links a {
+  font-size: .68rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--grey); text-decoration: none; transition: color .2s;
+}
+.footer-links a:hover { color: var(--gold); }
+.footer-copy { font-size: .65rem; color: rgba(136,136,136,.6); letter-spacing: .1em; }
+.footer-copy span { color: var(--orange); }
+
+/* ── Reveal animations ──────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .7s ease, transform .7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-30px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(30px); transition: opacity .7s ease, transform .7s ease; }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ── WhatsApp float ─────────────────────────────────────────── */
+.wa-float {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 800;
+  width: 54px; height: 54px; background: #25d366; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(37,211,102,.4);
+  text-decoration: none; transition: transform .3s, box-shadow .3s;
+  animation: waFloat 3s ease-in-out infinite;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(37,211,102,.6); }
+@keyframes waFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.wa-float svg { width: 28px; height: 28px; fill: #fff; }
+
+/* ── Sección de imagen hero banner ─────────────────────────── */
+/* Placeholder visual para poner imagen de fondo en hero */
+.hero-img-bg {
+  position: absolute; inset: 0; z-index: 0;
+  /* REEMPLAZA la URL por tu foto de fondo real: */
+  /* background-image: url('TU_FOTO_AQUI.jpg'); */
+  background-size: cover; background-position: center;
+}
+```
+
+  </style>
+</head>
+<body>
+
+<!-- WhatsApp float -->
+
+<a href="https://wa.me/56984923535" class="wa-float" target="_blank" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M11.997 0C5.373 0 0 5.373 0 12c0 2.115.553 4.1 1.523 5.824L.057 23.556a.5.5 0 0 0 .608.607l5.803-1.498A11.957 11.957 0 0 0 12 24c6.627 0 12-5.373 12-12S18.624 0 11.997 0zm.003 21.818a9.814 9.814 0 0 1-5.032-1.382l-.36-.214-3.733.962.994-3.641-.234-.372A9.818 9.818 0 0 1 2.182 12c0-5.417 4.401-9.818 9.818-9.818 5.417 0 9.818 4.401 9.818 9.818S17.414 21.818 12 21.818z"/>
+  </svg>
+</a>
+
+<!-- ── NAV ──────────────────────────────────────────────────────── -->
+
+<nav id="main-nav">
+  <div class="nav-logo-wrap">
+    <div class="nav-logo-circle">
+      <!-- 🖼 LOGO NAV → img src="TU URL AQUÍ" -->
+      <img
+        src="TU URL AQUÍ"
+        alt="Raku Fusion Sushi"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      />
+      <div class="logo-initials" style="display:none;">RF</div>
+    </div>
+    <div class="nav-brand-text">
+      <span class="nav-brand-main">Raku Fusion</span>
+      <span class="nav-brand-sub">Sushi Bar</span>
+    </div>
+  </div>
+
+  <button class="hamburger" id="ham-btn" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile menu overlay -->
+
+<div class="menu-overlay" id="menu-overlay">
+  <a href="#hero" onclick="closeMenu()">Inicio</a>
+  <div class="menu-divider"></div>
+  <a href="#about" onclick="closeMenu()">Nosotros</a>
+  <div class="menu-divider"></div>
+  <a href="#menu-preview" onclick="closeMenu()">Carta</a>
+  <div class="menu-divider"></div>
+  <a href="#promos" onclick="closeMenu()">Promociones</a>
+  <div class="menu-divider"></div>
+  <a href="#contacto" onclick="closeMenu()">Contacto</a>
+  <div class="menu-divider"></div>
+  <a href="#" onclick="showFullMenu(); closeMenu();">Carta Completa</a>
+</div>
+
+<!-- ── HERO ─────────────────────────────────────────────────────── -->
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <!--
+    IMAGEN DE FONDO HERO:
+    Para agregar una foto de fondo al hero, descomenta la línea de abajo
+    y reemplaza 'TU_FOTO.jpg' con la URL de tu imagen.
+    <div class="hero-img-bg" style="background-image:url('TU_FOTO.jpg');opacity:.25;"></div>
+  -->
+  <div class="wave-decor"></div>
+  <div class="wave-decor"></div>
+  <div class="wave-decor"></div>
+  <div class="wave-decor-left" style="width:500px;height:500px;"></div>
+  <div class="wave-decor-left" style="width:300px;height:300px;left:-80px;top:160px;border-color:rgba(201,150,63,.16);"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Ecoparque · Machalí · Chile</div>
+
+```
+<div class="hero-logo-circle">
+  <!-- 🖼 LOGO HERO → img src="TU URL AQUÍ" -->
+  <img
+    src="TU URL AQUÍ"
+    alt="Raku Fusion Sushi"
+    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+  />
+  <div class="logo-fallback" style="display:none;">
+    <span>RAKU</span>
+    <span>FUSION</span>
+    <small>Sushi Bar</small>
+  </div>
+</div>
+
+<p class="hero-tagline">La fusión perfecta entre sabor y frescura</p>
+<div class="hero-ctas">
+  <a href="#menu-preview" class="btn-primary">Ver Carta</a>
+  <a href="#promos" class="btn-outline">Promociones</a>
+</div>
+```
+
+  </div>
+
+  <!-- SCROLL centrado -->
+
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ── TICKER ────────────────────────────────────────────────────── -->
+
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<!-- ── ABOUT ──────────────────────────────────────────────────────── -->
+
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal-left">
+        <p class="section-label">Nuestra Historia</p>
+        <!-- Tipografía de lujo Playfair Display -->
+        <h2 class="about-heading-luxury">El Arte de<br /><em>la Fusión</em></h2>
+        <p class="about-heading-sub">Tradición japonesa con alma latinoamericana</p>
+        <div class="separator"></div>
+        <p>En Raku Fusion unimos lo mejor de la cocina japonesa con ingredientes frescos y técnicas modernas. Cada pieza es una experiencia sensorial única, elaborada con pasión y creatividad.</p>
+        <p>Ubicados en el corazón de Ecoparque, Machalí, ofrecemos un menú amplio que va desde clásicos rolls hasta sushi burgers, hand rolls, bocados fusión y platos calientes.</p>
+        <div class="about-stats">
+          <div class="stat-box">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Ingredientes Frescos</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">+40</div>
+            <div class="stat-label">Variedades en Carta</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">2.6K</div>
+            <div class="stat-label">Seguidores IG</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-num">★4.9</div>
+            <div class="stat-label">Satisfacción</div>
+          </div>
+        </div>
+      </div>
+
+```
+  <div class="about-visual reveal-right">
+    <div class="about-img-frame">
+      <!-- 🖼 FOTO NOSOTROS → img src="TU URL AQUÍ" -->
+      <img
+        src="TU URL AQUÍ"
+        alt="Sushi Raku Fusion"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+      />
+      <div class="img-placeholder-label">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <span>Tu foto aquí</span>
+      </div>
+    </div>
+    <div class="frame-corner"></div>
+  </div>
+</div>
+```
+
+  </div>
+</section>
+
+<!-- ── MENU PREVIEW ──────────────────────────────────────────────── -->
+
+<section id="menu-preview">
+  <div class="container">
+    <div class="menu-preview-header">
+      <div class="reveal">
+        <p class="section-label">Nuestra Carta</p>
+        <h2 class="menu-title-luxury">Lo Mejor<br /><em>de la Casa</em></h2>
+      </div>
+      <div class="menu-tabs reveal">
+        <button class="tab-btn active" onclick="filterMenu('all', this)">Todos</button>
+        <button class="tab-btn" onclick="filterMenu('clasico', this)">Clásicos</button>
+        <button class="tab-btn" onclick="filterMenu('premium', this)">Premium</button>
+        <button class="tab-btn" onclick="filterMenu('nikkei', this)">Nikkei</button>
+        <button class="tab-btn" onclick="filterMenu('caliente', this)">Calientes</button>
+      </div>
+    </div>
+    <div class="menu-grid" id="menu-grid"></div>
+    <div class="menu-cta-wrap reveal">
+      <a href="#" onclick="showFullMenu()" class="btn-primary">Ver Carta Completa</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROMOS ────────────────────────────────────────────────────── -->
+
+<section id="promos">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-label">Ofertas Especiales</p>
+      <h2 class="section-title-luxury">Nuestras<br /><em>Promociones</em></h2>
+      <p class="section-subtitle">Promociones no sujetas a cambios</p>
+    </div>
+    <div class="promos-grid">
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">30</div>
+        <p class="promo-name">30 Piezas Clásicas</p>
+        <ul class="promo-items">
+          <li>10 Pollo Panko</li>
+          <li>10 Pollo Avocado</li>
+          <li>10 Pollo Envuelto en Sésamo</li>
+        </ul>
+        <div class="promo-price">$17.990</div>
+      </div>
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">40</div>
+        <p class="promo-name">40 Piezas Clásicas</p>
+        <ul class="promo-items">
+          <li>20 Pollo Panko</li>
+          <li>10 Pollo Avocado</li>
+          <li>10 Pollo Cheese</li>
+        </ul>
+        <div class="promo-price">$22.990</div>
+      </div>
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">50</div>
+        <p class="promo-name">50 Piezas Clásicas</p>
+        <ul class="promo-items">
+          <li>20 Pollo Panko</li>
+          <li>10 Camarón Panko</li>
+          <li>10 Pollo Avocado</li>
+          <li>10 Pollo Cheese</li>
+        </ul>
+        <div class="promo-price">$25.990</div>
+      </div>
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">55</div>
+        <p class="promo-name">55 Piezas Mix</p>
+        <ul class="promo-items">
+          <li>10 Pollo Panko</li>
+          <li>10 Salmón Panko</li>
+          <li>10 California Rolls</li>
+          <li>10 Ebi Camarón</li>
+          <li>10 Salmón Cheese + 5 Gyosas Mixtas</li>
+        </ul>
+        <div class="promo-price">$34.990</div>
+      </div>
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">30</div>
+        <p class="promo-name">30 Piezas Sin Arroz</p>
+        <ul class="promo-items">
+          <li>Pollo Zen · Furai Fusión</li>
+          <li>Veggie Cheese</li>
+        </ul>
+        <div class="promo-price">$24.990</div>
+      </div>
+      <div class="promo-card reveal">
+        <div class="promo-card-qty">2</div>
+        <p class="promo-name">Furay Lunch</p>
+        <ul class="promo-items">
+          <li>Salmón, queso crema, palta</li>
+          <li>+ 2 empanadas de queso</li>
+        </ul>
+        <div class="promo-price">$7.990</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EXPERIENCE ─────────────────────────────────────────────────── -->
+
+<section id="experience">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-label">Por qué elegirnos</p>
+      <h2 class="section-title-luxury">Una <em>Experiencia</em><br />Única</h2>
+    </div>
+    <div class="experience-grid">
+      <div class="exp-item reveal">
+        <div class="exp-icon">🍣</div>
+        <h3>Sushi Artesanal</h3>
+        <p>Cada roll elaborado a mano con técnica japonesa y un toque fusión latinoamericano irresistible.</p>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-icon">🥑</div>
+        <h3>Ingredientes Frescos</h3>
+        <p>Seleccionamos los mejores productos frescos cada día para garantizar sabor y calidad superior.</p>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-icon">🍔</div>
+        <h3>Sushi Burger</h3>
+        <p>Nuestra innovadora Sushi Burger combina lo mejor de dos mundos en una experiencia única.</p>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-icon">📦</div>
+        <h3>Combos para Compartir</h3>
+        <p>Desde 30 hasta 55 piezas, tenemos el combo perfecto para cada reunión o celebración.</p>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-icon">🥢</div>
+        <h3>Menú Amplio</h3>
+        <p>Rolls clásicos, premium, nikkei, hand rolls, bocados fusión, platos calientes y más.</p>
+      </div>
+      <div class="exp-item reveal">
+        <div class="exp-icon">📍</div>
+        <h3>Ecoparque Machalí</h3>
+        <p>Encuéntranos en el Ecoparque de Machalí, un espacio moderno y acogedor para toda la familia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACTO ───────────────────────────────────────────────────── -->
+
+<section id="contacto">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <p class="section-label">Visítanos</p>
+      <h2 class="section-title-luxury">Horarios &<br /><em>Contacto</em></h2>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-block reveal-left">
+        <h3>Horario de Atención</h3>
+        <div class="horario-row"><span class="horario-day">Lunes – Martes</span><span class="horario-time">Cerrado</span></div>
+        <div class="horario-row"><span class="horario-day">Miércoles – Viernes</span><span class="horario-time">16:00 – 21:00</span></div>
+        <div class="horario-row"><span class="horario-day">Sábado</span><span class="horario-time">14:00 – 21:30</span></div>
+        <div class="horario-row"><span class="horario-day">Domingo</span><span class="horario-time">14:00 – 21:30</span></div>
+        <br />
+        <a href="https://instagram.com/rakufusion_sushibar" class="ig-btn" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          @rakufusion_sushibar
+        </a>
+      </div>
+      <div class="contact-block reveal-right">
+        <h3>Información</h3>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">📍</div>
+          <div class="contact-info-text">
+            <p>Dirección</p>
+            <a href="https://maps.google.com/?q=Ecoparque+Machali" target="_blank">Ecoparque, Machalí, O'Higgins</a>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">📱</div>
+          <div class="contact-info-text">
+            <p>WhatsApp / Reservas</p>
+            <a href="https://wa.me/56984923535">+56 9 8492 3535</a>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">📷</div>
+          <div class="contact-info-text">
+            <p>Instagram</p>
+            <a href="https://instagram.com/rakufusion_sushibar" target="_blank">@rakufusion_sushibar</a>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon">🌐</div>
+          <div class="contact-info-text">
+            <p>Menú Online</p>
+            <a href="https://menu.fu.do/rakufusion" target="_blank">menu.fu.do/rakufusion</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FULL MENU PAGE ─────────────────────────────────────────────── -->
+
+<section id="full-menu">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:3rem;">
+      <div>
+        <p class="section-label">Menú Completo</p>
+        <h2 class="section-title-luxury">Carta<br /><em>Completa</em></h2>
+      </div>
+      <button onclick="hideFullMenu()" class="btn-outline">← Volver</button>
+    </div>
+
+```
+<!-- Imagen banner carta completa -->
+<div style="width:100%;aspect-ratio:16/6;background:var(--dark);border:1px solid rgba(201,150,63,.2);overflow:hidden;margin-bottom:4rem;position:relative;">
+  <!-- 🖼 BANNER CARTA COMPLETA → img src="TU URL AQUÍ" -->
+  <img src="TU URL AQUÍ"
+       alt="Raku Fusion Sushi – Carta"
+       style="width:100%;height:100%;object-fit:cover;filter:saturate(.85);"
+       onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+  <!-- Placeholder carta completa -->
+  <div style="display:none;width:100%;height:100%;background:linear-gradient(135deg,#161616,#1f1f1f);align-items:center;justify-content:center;flex-direction:column;gap:.7rem;">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#555" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <span style="font-size:.62rem;letter-spacing:.3em;color:#555;text-transform:uppercase;">Imagen banner carta</span>
+  </div>
+  <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(10,10,10,.7),transparent);display:flex;align-items:center;padding:3rem;">
+    <div>
+      <p style="font-size:.7rem;letter-spacing:.3em;color:var(--orange);text-transform:uppercase;">Bienvenido a</p>
+      <h3 style="font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);color:var(--cream);letter-spacing:.02em;line-height:1.15;font-weight:600;">Raku Fusion<br /><em style="color:var(--gold);">Sushi Bar</em></h3>
+    </div>
+  </div>
+</div>
+
+<div class="full-menu-section"><h3 class="fms-title">🍣 Rolls Clásicos</h3><div class="fms-grid" id="fms-clasicos"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🌿 Not Rice</h3><div class="fms-grid" id="fms-notrice"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">⭐ Rolls Premium</h3><div class="fms-grid" id="fms-premium"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🎌 Nikkei</h3><div class="fms-grid" id="fms-nikkei"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🍔 Sushi Burger</h3><div class="fms-grid" id="fms-burger"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🥟 Bocados Fusión</h3><div class="fms-grid" id="fms-bocados"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🐟 Crudos y Frescos</h3><div class="fms-grid" id="fms-crudos"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🍚 Gohan</h3><div class="fms-grid" id="fms-gohan"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🌯 Hand Rolls</h3><div class="fms-grid" id="fms-handrolls"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🔥 Platos Calientes</h3><div class="fms-grid" id="fms-calientes"></div></div>
+<div class="full-menu-section"><h3 class="fms-title">🥤 Bebestibles</h3><div class="fms-grid" id="fms-bebidas"></div></div>
+```
+
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+
+<footer>
+  <!-- 🖼 LOGO FOOTER → img src="TU URL AQUÍ" -->
+  <div class="footer-logo-circle">
+    <img
+      src="TU URL AQUÍ"
+      alt="Raku Fusion"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+    />
+    <span class="logo-initials" style="display:none;">RF</span>
+  </div>
+  <div class="footer-links">
+    <a href="#about">Nosotros</a>
+    <a href="#menu-preview">Carta</a>
+    <a href="#promos">Promociones</a>
+    <a href="#contacto">Contacto</a>
+    <a href="https://instagram.com/rakufusion_sushibar" target="_blank">Instagram</a>
+  </div>
+  <p class="footer-copy">© <span>2026</span> Raku Fusion Sushi · Ecoparque, Machalí · Todos los derechos reservados</p>
+</footer>
+
+<script>
+
+
+/* ── Nav scroll ─────────────────────────────────────── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 60); });
+
+/* ── Hamburger ──────────────────────────────────────── */
+const ham = document.getElementById('ham-btn');
+const overlay = document.getElementById('menu-overlay');
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  overlay.classList.toggle('open');
+  document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
+});
+function closeMenu() {
+  ham.classList.remove('open'); overlay.classList.remove('open'); document.body.style.overflow = '';
+}
+
+/* ── Ticker ─────────────────────────────────────────── */
+const tickerItems = [
+  'Rolls Clásicos','Rolls Premium','Sushi Burger','Hand Rolls',
+  'Bocados Fusión','Nikkei','Crudos y Frescos','Platos Calientes',
+  'Promos Especiales','Ecoparque Machalí','Reservas al +56 9 8492 3535'
+];
+const ticker = document.getElementById('ticker');
+ticker.innerHTML = [...tickerItems, ...tickerItems].map(t =>
+  `<div class="ticker-item"><span class="ticker-dot"></span>${t}</div>`
+).join('');
+
+/* ── Menu cards data ────────────────────────────────── */
+const menuCards = [
+  { cat:'clasico', name:'Pollo Panko', desc:'Pollo, queso crema, palta. Envuelto en panko.', price:'$6.500', badge:'Clásico',
+    img:'https://images.unsplash.com/photo-1617196034183-421b4040d187?w=400&q=80' },
+  { cat:'clasico', name:'Salmón Panko', desc:'Salmón, queso crema, palta. Apanado en panko.', price:'$7.500', badge:'Clásico',
+    img:'https://images.unsplash.com/photo-1559410545-0bdcd187e0a6?w=400&q=80' },
+  { cat:'premium', name:'Ceviche Rolls', desc:'Camarón, queso crema, cebollin, palta. Topping de ceviche.', price:'$11.990', badge:'⭐ Premium',
+    img:'https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=400&q=80' },
+  { cat:'premium', name:'Rainbow Rolls', desc:'Camarón apanado, queso crema, cebollín. Envuelto con mix de salmón y palta.', price:'$9.990', badge:'⭐ Premium',
+    img:'https://images.unsplash.com/photo-1617196035154-1e7e6e28b0db?w=400&q=80' },
+  { cat:'nikkei', name:'Huancaína Nikkei', desc:'Pollo teriyaki, queso crema, envuelto en palta, cubierto con salsa huancaína.', price:'$8.990', badge:'Nikkei',
+    img:'https://images.unsplash.com/photo-1553621042-f6e147245754?w=400&q=80' },
+  { cat:'caliente', name:'Lomo Saltado', desc:'Carne salteada a fuego alto con verduras en juliana, pimentón, tomate, cilantro. Con arroz y papas fritas.', price:'$10.990', badge:'🔥 Caliente',
+    img:'https://images.unsplash.com/photo-1626804475297-41608ea09aeb?w=400&q=80' },
+];
+
+function buildCards(filter) {
+  const grid = document.getElementById('menu-grid');
+  grid.innerHTML = '';
+  const items = filter === 'all' ? menuCards : menuCards.filter(c => c.cat === filter);
+  items.forEach((item, i) => {
+    grid.innerHTML += `
+      <div class="menu-card reveal" style="transition-delay:${i * 0.08}s">
+        <div class="menu-card-img">
+          <img src="${item.img}" alt="${item.name}" loading="lazy" />
+          <span class="card-badge">${item.badge}</span>
+        </div>
+        <div class="menu-card-body">
+          <p class="menu-card-name">${item.name}</p>
+          <p class="menu-card-desc">${item.desc}</p>
+          <div class="menu-card-footer">
+            <span class="menu-card-price">${item.price}</span>
+            <span class="card-tag">Ver más</span>
+          </div>
+        </div>
+      </div>`;
+  });
+  observeReveal();
+}
+
+function filterMenu(cat, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCards(cat);
+}
+
+/* ── Full menu data ─────────────────────────────────── */
+const fullMenuData = {
+  'fms-clasicos': [
+    { name:'Pollo Panko', desc:'Pollo, queso crema, palta. Envuelto en panko', price:'$6.500' },
+    { name:'Beef Panko', desc:'Carne, queso crema, pimentón. Envuelto en panko', price:'$6.990' },
+    { name:'Pollo Pimentón', desc:'Pollo, queso crema, pimentón. Envuelto en panko', price:'$5.990' },
+    { name:'Camarón Panko', desc:'Camarón, queso crema, palta. Apanado en panko', price:'$6.500' },
+    { name:'Salmón Panko', desc:'Salmón, queso crema, palta. Apanado en panko', price:'$7.500' },
+    { name:'Pollo Avocado', desc:'Pollo, queso crema, cebollín. Envuelto en palta', price:'$7.500' },
+    { name:'Pollo Pimentón Avocado', desc:'Pollo, queso crema, pimentón. Envuelto en palta', price:'$7.500' },
+    { name:'Beef Avocado', desc:'Carne, queso crema, pimentón. Envuelto en palta', price:'$7.500' },
+    { name:'Camarón Avocado', desc:'Camarón, queso crema, cebollín. Envuelto en palta', price:'$7.500' },
+    { name:'Salmón Avocado', desc:'Salmón, queso crema, cebollín. Envuelto en palta', price:'$7.990' },
+    { name:'Pollo Cheese', desc:'Pollo, palta, cebollín. Envuelto en queso crema', price:'$6.500' },
+    { name:'Beef Cheese', desc:'Carne, palta, cebollín. Envuelto en queso crema', price:'$7.500' },
+    { name:'Camarón Cheese', desc:'Camarón, palta, cebollín. Envuelto en queso crema', price:'$7.500' },
+    { name:'Salmón Cheese', desc:'Salmón, palta, cebollín. Envuelto en queso crema', price:'$7.500' },
+  ],
+  'fms-notrice': [
+    { name:'Pollo Zen', desc:'Champiñón apanado, salmón, palta, queso crema. Envuelto en palta con sésamo', price:'$7.500' },
+    { name:'Sweet Sake', desc:'Champiñón apanado, salmón, palta. Envuelto en queso crema. Topping de cebolla caramelizada', price:'$6.990' },
+    { name:'Furai Fusión', desc:'Camarón furay, kanikama, queso crema, palta, cebollín. Envuelto en panko', price:'$8.500' },
+    { name:'Veggie Cheese', desc:'Palmito, champiñón, palta, pimentón. Envuelto en queso crema', price:'$7.290' },
+    { name:'Samuray Rolls', desc:'Camarón panko, queso crema, palta, cebollín. Envuelto en salmón panko. Topping de pasta dinamita', price:'$8.990' },
+    { name:'Ebi Acevichado', desc:'Salmón, queso crema, palta, pepino. Envuelto en palta. Topping de camarón con salsa acevichada', price:'$10.990' },
+    { name:'Veggi Riceless', desc:'Champiñón apanado, palta, pimentón. Envuelto en queso crema. Bañado en salsa teriyaki', price:'$8.990' },
+    { name:'Raku Rolls', desc:'Pulpo, salmón, ciboulette, queso crema, salsa spicy. Envuelto en palta. Topping de salsa acevichada', price:'$11.990' },
+  ],
+  'fms-premium': [
+    { name:'Ceviche Rolls', desc:'Camarón, queso crema, cebollín, palta. Topping de ceviche', price:'$11.990' },
+    { name:'California Rolls', desc:'Kanikama, queso crema, pepino, palta. Envuelto en sésamo', price:'$6.990' },
+    { name:'Sake Rolls', desc:'Salmón, queso crema, palta. Envuelto en sésamo', price:'$7.990' },
+    { name:'Rainbow Rolls', desc:'Camarón apanado, queso crema, cebollín. Envuelto con mix de salmón y palta', price:'$9.990' },
+    { name:'Kani Crunch', desc:'Kanikama, queso crema, palta. Envuelto en kanikama crunch, acompañado de salsa teriyaki', price:'$6.990' },
+    { name:'Beef Rolls', desc:'Carne, queso crema, palta. Envuelto en palta, acompañado de salsa teriyaki', price:'$10.990' },
+    { name:'Tentación Rolls', desc:'Salmón apanado, queso crema, palta. Envuelto en panko, acompañado de salsa teriyaki', price:'$11.990' },
+    { name:'Ebi Tempura', desc:'Camarón apanado, queso crema, cebollín, masago. Envuelto en nori tempura', price:'$9.990' },
+    { name:'Tiguer Rolls', desc:'Salmón, queso crema, palta, masago. Envuelto en nori tempura', price:'$8.990' },
+    { name:'Veggie Cheese Premium', desc:'Relleno de champiñón apanado, pimentón, queso crema. Acompañado de salsa teriyaki', price:'$7.990' },
+  ],
+  'fms-nikkei': [
+    { name:'Huancaína Nikkei', desc:'Pollo teriyaki, queso crema, envuelto en palta, cubierto con salsa huancaína', price:'$8.990' },
+    { name:'Olivo Tako Roll', desc:'Pulpo, palta, cebollín, envuelto en queso crema, flameado con salsa oliva', price:'$8.990' },
+    { name:'Saltado Nikkei Roll', desc:'Palta, tomate, cebollín, cubierto con un topping de lomo saltado', price:'$10.990' },
+    { name:'Mexican Nikkei Roll', desc:'Pollo teriyaki, queso crema, envuelto suavemente en merken con topping de guacamole', price:'$9.990' },
+    { name:'Sweet Mango Roll', desc:'Pollo teriyaki, queso crema, mango, envuelto en mango con toques de salsa maracuyá', price:'$8.990' },
+    { name:'Almond Nikkei Roll', desc:'Camarones apanados, palta, envuelto en queso crema, flameado y almendras', price:'$8.990' },
+    { name:'Ebi Cream Roll', desc:'Camarones apanados, queso crema, palta, apanado en panko, bañado con crema de champiñones', price:'$9.990' },
+  ],
+  'fms-burger': [
+    { name:'Sushi Burger Pollo', desc:'Arroz, queso crema, palta, cebollín, pollo panko', price:'$9.990' },
+    { name:'Sushi Burger Champiñón', desc:'Arroz, queso crema, palta, cebollín, champiñón salteado', price:'$8.990' },
+    { name:'Sushi Burger Camarón', desc:'Arroz, queso crema, palta, cebollín, camarón apanado', price:'$10.990' },
+    { name:'Sushi Burger Mix', desc:'Arroz, queso crema, palta, cebollín, selección 2 proteínas', price:'$12.000' },
+  ],
+  'fms-bocados': [
+    { name:'Empanadas de Queso', desc:'5 exquisitas empanadas rellenas de queso', price:'$4.500' },
+    { name:'Empanadas Pollo Mandarín', desc:'5 exquisitas empanadas rellenas de pollo con vegetales', price:'$4.500' },
+    { name:'Empanadas Camarón Mandarín', desc:'5 exquisitas empanadas rellenas de camarón con vegetales', price:'$4.990' },
+    { name:'Empanadas Beef Mandarín', desc:'5 exquisitas empanadas rellenas de carne con vegetales', price:'$4.990' },
+    { name:'Arollados Primavera o Jamón Queso', desc:'Unidades de arrollado primavera o jamón queso', price:'$3.900' },
+    { name:'Gyosas', desc:'5 unidades de gyosas', price:'$6.000' },
+    { name:'Gyosas al Vapor', desc:'3 unidades (Champiñón, verduras, Camarón)', price:'$4.000' },
+    { name:'Menú Kids', desc:'Para los más pequeños de la casa', price:'$5.900' },
+    { name:'Papas Fritas', desc:'Porción de papas fritas', price:'$4.000' },
+  ],
+  'fms-crudos': [
+    { name:'Ceviche de Reineta', desc:'Fresco y preparado al momento', price:'$9.990' },
+    { name:'Ceviche de Salmón', desc:'Salmón fresco marinado al estilo peruano', price:'$11.990' },
+    { name:'Ceviche Mixto', desc:'Combinación de mariscos frescos', price:'$14.990' },
+    { name:'Sashimi Salmón', desc:'Finas láminas de salmón fresco', price:'$7.990' },
+    { name:'Sashimi Pulpo', desc:'Finas láminas de pulpo fresco', price:'$6.990' },
+    { name:'Sashimi Mixto', desc:'Combinación de sashimi selecto', price:'$9.990' },
+  ],
+  'fms-gohan': [
+    { name:'Gohan Pollo', desc:'Arroz, queso crema, palta, cebollín, pollo panko', price:'$7.990' },
+    { name:'Gohan Salmón', desc:'Arroz, queso crema, palta, cebollín, salmón', price:'$8.990' },
+    { name:'Gohan Camarón', desc:'Arroz, queso crema, palta, cebollín, camarón panko', price:'$8.500' },
+    { name:'Gohan Mixto', desc:'Arroz, queso crema, palta, cebollín, 2 proteínas a elección', price:'$9.990' },
+  ],
+  'fms-handrolls': [
+    { name:'Hand Rolls Pollo', desc:'Arroz, queso crema, cebollín, pollo', price:'$4.500' },
+    { name:'Hand Rolls Camarón', desc:'Arroz, queso crema, cebollín, camarón panko', price:'$5.000' },
+  ],
+  'fms-calientes': [
+    { name:'Lomo Saltado', desc:'Carne salteada con verduras en juliana, pimentón, tomate, cilantro. Con arroz y papas fritas', price:'$10.990' },
+    { name:'Tallarín Saltado', desc:'Carne o pollo salteado con verduras en juliana, terminado con tallarines', price:'$10.990' },
+    { name:'Yakisoba', desc:'Fideo japonés salteado con pollo o carne, verduras en juliana', price:'$9.990' },
+    { name:'Yakimeshi', desc:'Arroz blanco salteado con pollo o carne, verduras en brunoise', price:'$9.990' },
+  ],
+  'fms-bebidas': [
+    { name:'Bebida en Lata 335ml', desc:'Selección de bebidas', price:'$2.000' },
+    { name:'Jugo Natural', desc:'Jugos naturales frescos', price:'$2.900' },
+    { name:'Agua Mineral 500ml', desc:'Agua mineral natural', price:'$1.500' },
+    { name:'Jugo en Botella 400ml', desc:'Jugo en botella', price:'$1.500' },
+  ],
+};
+
+function buildFullMenu() {
+  Object.entries(fullMenuData).forEach(([id, items]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = items.map(item => `
+      <div class="fms-item">
+        <div>
+          <p class="fms-item-name">${item.name}</p>
+          <p class="fms-item-desc">${item.desc}</p>
+        </div>
+        <span class="fms-item-price">${item.price}</span>
+      </div>
+    `).join('');
+  });
+}
+
+/* ── Show / Hide full menu ──────────────────────────── */
+function showFullMenu() {
+  document.getElementById('full-menu').classList.add('visible');
+  document.getElementById('full-menu').scrollIntoView({ behavior: 'smooth' });
+}
+function hideFullMenu() {
+  document.getElementById('full-menu').classList.remove('visible');
+  document.getElementById('menu-preview').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── Scroll reveal ──────────────────────────────────── */
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible), .reveal-left:not(.visible), .reveal-right:not(.visible)');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  els.forEach(el => obs.observe(el));
+}
+
+/* ── Init ───────────────────────────────────────────── */
+buildCards('all');
+buildFullMenu();
+observeReveal();
+</script>
+
+</body>
+</html>
